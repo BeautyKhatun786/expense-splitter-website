@@ -1,0 +1,11 @@
+import Avatar from "./Avatar";
+
+export default function SummaryTab({ summary }) {
+  if (!summary) return <p className="loading-text">Loading…</p>;
+  const { totalExpense, balances, settlements, recordedSettlements = [] } = summary;
+  const maxAbs = Math.max(1, ...balances.map(b=>Math.abs(b.net)));
+  return <div><div className="stat-grid" style={{marginBottom:26}}><div className="stat-card"><div className="stat-label">Total expense</div><div className="stat-value">₹{totalExpense.toFixed(2)}</div></div><div className="stat-card"><div className="stat-label">Participants</div><div className="stat-value">{summary.participantCount}</div></div><div className="stat-card"><div className="stat-label">Expenses logged</div><div className="stat-value">{summary.expenseCount}</div></div><div className="stat-card"><div className="stat-label">Payments recorded</div><div className="stat-value">{recordedSettlements.length}</div></div></div>
+    <div className="card" style={{marginBottom:20}}><div className="section-title">Amount paid vs. owed</div>{!balances.length?<p className="loading-text">Nothing to show yet.</p>:balances.map(b=><div className="ledger-row" key={b.id} style={{alignItems:"flex-start"}}><div className="row-left" style={{flex:1,alignItems:"flex-start"}}><Avatar name={b.name}/><div style={{flex:1}}><div className="ledger-name">{b.name}</div><div className="ledger-sub">Paid ₹{b.paid.toFixed(2)} · Owes ₹{b.owed.toFixed(2)} · Settled out ₹{b.settledOut.toFixed(2)}</div><div className="balance-bar-track"><div className={`balance-bar-fill ${b.net>=0?"pos":"neg"}`} style={{width:`${Math.abs(b.net)/maxAbs*100}%`}}/></div></div></div><span className={`pill ${b.net>=0?"pos":"neg"}`}>{b.net>=0?"gets back":"owes"} ₹{Math.abs(b.net).toFixed(2)}</span></div>)}</div>
+    <div className="card"><div className="section-title">Simplified settlement plan</div>{!settlements.length?<p className="loading-text">Everyone is settled up.</p>:settlements.map((s,i)=><div className="settlement-row" key={i}><Avatar name={s.from} size="small"/><span className="ledger-name">{s.from}</span><span className="settlement-arrow">pays</span><span className="ledger-amount">₹{s.amount.toFixed(2)}</span><span className="settlement-arrow">to</span><Avatar name={s.to} size="small"/><span className="ledger-name">{s.to}</span></div>)}</div>
+  </div>;
+}

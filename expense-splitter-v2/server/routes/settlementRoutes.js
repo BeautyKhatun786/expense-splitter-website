@@ -1,0 +1,10 @@
+const express = require("express");
+const router = express.Router({ mergeParams: true });
+const auth = require("../middleware/auth");
+const eventAccess = require("../middleware/eventAccess");
+const { createSettlement, getSettlements, deleteSettlement } = require("../controllers/settlementController");
+router.use(auth, eventAccess);
+router.post("/", createSettlement);
+router.get("/", getSettlements);
+router.delete("/:id", deleteSettlement);
+module.exports = router;
